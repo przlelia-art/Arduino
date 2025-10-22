@@ -17,9 +17,12 @@ DHT dht(DHTPIN, DHTTYPE);
 int Temperature = dht.readTemperature();
 
 void setup() {
-   pinMode(13, OUTPUT); // Définir la LED intégrée en mode sortie
+   pinMode(13, OUTPUT);
    pinMode(12, OUTPUT);
    pinMode(11, OUTPUT);
+   pinMode(10, OUTPUT);
+   pinMode(9, OUTPUT);
+   pinMode(8, OUTPUT);
 
   
   //initialize lcd screen
@@ -47,22 +50,21 @@ void loop() {
   // you can change whats in the quotes to be what you want  it to be!
   lcd.print("Humidite = " + String(dht.readHumidity())+" %");
 
-
-if(Temperature > 22){
+   if(Temperature < 18){
    digitalWrite(13, HIGH);
    digitalWrite(12, LOW);
    digitalWrite(11, LOW);
    }
    
    else if(Temperature >= 18 && Temperature <= 22){
-   digitalWrite(13, LOW);
+   digitalWrite(13, HIGH);
    digitalWrite(12, HIGH);
    digitalWrite(11, LOW);
    }
 
-   else if(Temperature < 18){
-   digitalWrite(13, LOW);
-   digitalWrite(12, LOW);
+   else (Temperature > 22);{
+   digitalWrite(13, HIGH);
+   digitalWrite(12, HIGH);
    digitalWrite(11, HIGH);
    }
 }

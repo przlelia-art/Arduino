@@ -6,5 +6,9 @@
 
     void loop() {
      digitalWrite(13, HIGH); // Allume la LED
-     digitalWrite(12, HIGH); // Allume la LED
+     digitalWrite(12, LOW); // Allume la LED
+     delay(1000);
+     digitalWrite(12, HIGH);
+     digitalWrite(13, LOW);
+     delay(1000);
     }

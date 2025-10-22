@@ -1,28 +1,43 @@
 
-// Capteur de temperature et d'humidite DHT11
-// https://tutoduino.fr/
-// Copyleft 2020
+#include <LiquidCrystal_I2C.h>
+
+#include  <Wire.h>
+
+//initialize the liquid crystal library
+//the first parameter is  the I2C address
+//the second parameter is how many rows are on your screen
+//the  third parameter is how many columns are on your screen
+LiquidCrystal_I2C lcd(0x27,  16, 2);
+
 #include "DHT.h"
-// Definit la broche de l'Arduino sur laquelle la 
-// broche DATA du capteur est reliee 
 #define DHTPIN 2
-// Definit le type de capteur utilise
 #define DHTTYPE DHT11
-// Declare un objet de type DHT
-// Il faut passer en parametre du constructeur 
-// de l'objet la broche et le type de capteur
 DHT dht(DHTPIN, DHTTYPE);
+
+
 void setup() {
+  
+  //initialize lcd screen
+  lcd.init();
+  // turn on the backlight
+  lcd.backlight();
+  
   Serial.begin(9600);
   
   // Initialise la capteur DHT11
   dht.begin();
 }
 void loop() {
-  // Recupere la temperature et l'humidite du capteur et l'affiche
-  // sur le moniteur serie
-  Serial.println("Temperature = " + String(dht.readTemperature())+" °C");
-  Serial.println("Humidite = " + String(dht.readHumidity())+" %");
-  // Attend 10 secondes avant de reboucler
-  delay(10000);
+  //wait  for a second
+  delay(1000);
+  // tell the screen to write on the top row
+  lcd.setCursor(0,0);
+  // tell the screen to write “hello, from” on the top  row
+  lcd.print("Temperature = " + String(dht.readTemperature())+" °C");
+  // tell the screen to write on the bottom  row
+  lcd.setCursor(0,1);
+  // tell the screen to write “Arduino_uno_guy”  on the bottom row
+  // you can change whats in the quotes to be what you want  it to be!
+  lcd.print("Humidite = " + String(dht.readHumidity())+" %");
+  
 }

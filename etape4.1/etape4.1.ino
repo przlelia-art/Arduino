@@ -3,10 +3,6 @@
 
 #include  <Wire.h>
 
-//initialize the liquid crystal library
-//the first parameter is  the I2C address
-//the second parameter is how many rows are on your screen
-//the  third parameter is how many columns are on your screen
 LiquidCrystal_I2C lcd(0x27,  16, 2);
 
 #include "DHT.h"
@@ -14,57 +10,113 @@ LiquidCrystal_I2C lcd(0x27,  16, 2);
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-int Temperature = dht.readTemperature();
 
+  float Temp;
+  float seuilTempMax = 22.0;
+  float seuilTempMin = 18.0;
+  float Humi;
+  float seuilHumiMax = 60;
+  float seuilHumiMin = 30;
+  
 void setup() {
    pinMode(13, OUTPUT);
    pinMode(12, OUTPUT);
    pinMode(11, OUTPUT);
-  
 
-  
-  //initialize lcd screen
   lcd.init();
-  // turn on the backlight
   lcd.backlight();
-  
   Serial.begin(9600);
-  
-  // Initialise la capteur DHT11
   dht.begin();
-
   
 }
-void loop() {
-  //wait  for a second
-  delay(1000);
-  // tell the screen to write on the top row
-  lcd.setCursor(0,0);
-  // tell the screen to write “hello, from” on the top  row
-  lcd.print("Temp = " + String(dht.readTemperature())+" C");
-  // tell the screen to write on the bottom  row
-  lcd.setCursor(0,1);
-  // tell the screen to write “Arduino_uno_guy”  on the bottom row
-  // you can change whats in the quotes to be what you want  it to be!
-  lcd.print("Humi = " + String(dht.readHumidity())+" %");
 
-   if(Temperature < 18){
+void loop() {
+  Temp = dht.readTemperature();
+  Humi = dht.readHumidity();
+  
+  
+
+   if(Temp < 18){
    digitalWrite(13, HIGH);
    digitalWrite(12, LOW);
    digitalWrite(11, LOW);
    }
    
-   else if(Temperature >= 18 && Temperature <= 22){
+   else if(Temp >= 18 && Temp <= 22){
    digitalWrite(13, HIGH);
    digitalWrite(12, HIGH);
    digitalWrite(11, LOW);
    }
 
-   else (Temperature > 22);{
+   else (Temp > 22);{
    digitalWrite(13, HIGH);
    digitalWrite(12, HIGH);
    digitalWrite(11, HIGH);
    }
+   
+
+   if(Humi > 60){ 
+   digitalWrite(13, HIGH);
+   digitalWrite(12, LOW);
+   digitalWrite(11, LOW);
+   }
+   
+   else if(Humi >= 30 && Humi <= 60){
+   digitalWrite(13, LOW);
+   digitalWrite(12, HIGH);
+   digitalWrite(11, LOW);
+   }
+
+   else (Humi < 30);{
+   digitalWrite(13, LOW);
+   digitalWrite(12, LOW);
+   digitalWrite(11, HIGH);
+   }
+
+
+   
+  // Vérification des erreurs
+  if (isnan(Temp) || isnan(Humi)) {
+    lcd.setCursor(0,0);
+    lcd.print("Erreur capteur");
+    return;
+  }
+
+  // Affichage des valeurs
+    lcd.setCursor(0,0);
+    lcd.print("T:");
+    lcd.print(Temp,1);
+    lcd.print((char)223);
+    lcd.print("C  ");
+
+    
+    lcd.setCursor(0,1);
+    lcd.print("H:");
+    lcd.print(Humi, 1);
+    lcd.print("% "); 
+
+    // Affichage dynamique des alertes
+    lcd.setCursor(0,0);
+    if(Temp > seuilTempMax){
+        lcd.print("Temp Elevee !    ");
+    }
+    else if(Temp < seuilTempMin){
+        lcd.print("Temp Basse !     ");
+    }
+    
+    lcd.setCursor(0,1);
+    if(Humi > seuilHumiMax){
+        lcd.print("Hum Elevee !     ");
+    }
+    else if(Humi < seuilHumiMin){
+        lcd.print("Hum Basse !      ");
+    }
+    else {
+        lcd.print("Conditions OK    ");
+    }
+
+
+  delay(2000);
 }
 
 

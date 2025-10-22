@@ -1,26 +1,28 @@
-// Programme de test pour faire clignoter la LED intégrée toutes les secondes
-    void setup() {
-     pinMode(13, OUTPUT); // Définir la LED intégrée en mode sortie
-     pinMode(12, OUTPUT);
-     pinMode(11, OUTPUT); // Définir la LED intégrée en mode sortie
-     pinMode(10, OUTPUT);
-    }
-    
 
-    void loop() {
-     digitalWrite(13, HIGH);// Allume la LED
-     delay(500);
-     digitalWrite(13, LOW);
-     digitalWrite(12, HIGH); // Allume la LED
-     delay(500);
-     digitalWrite(12, LOW);
-     digitalWrite(11, HIGH);
-     delay(500);
-     digitalWrite(11, LOW);
-     digitalWrite(10, HIGH);
-     delay(500);
-     digitalWrite(10, LOW);
-
- 
-     
-    }
+// Capteur de temperature et d'humidite DHT11
+// https://tutoduino.fr/
+// Copyleft 2020
+#include "DHT.h"
+// Definit la broche de l'Arduino sur laquelle la 
+// broche DATA du capteur est reliee 
+#define DHTPIN 2
+// Definit le type de capteur utilise
+#define DHTTYPE DHT11
+// Declare un objet de type DHT
+// Il faut passer en parametre du constructeur 
+// de l'objet la broche et le type de capteur
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+  Serial.begin(9600);
+  
+  // Initialise la capteur DHT11
+  dht.begin();
+}
+void loop() {
+  // Recupere la temperature et l'humidite du capteur et l'affiche
+  // sur le moniteur serie
+  Serial.println("Temperature = " + String(dht.readTemperature())+" °C");
+  Serial.println("Humidite = " + String(dht.readHumidity())+" %");
+  // Attend 10 secondes avant de reboucler
+  delay(10000);
+}

@@ -14,7 +14,7 @@ LiquidCrystal_I2C lcd(0x27,  16, 2);
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-int H = dht.readHumidity();
+int Temperature = dht.readTemperature();
 
 void setup() {
    pinMode(13, OUTPUT); // Définir la LED intégrée en mode sortie
@@ -47,22 +47,25 @@ void loop() {
   // you can change whats in the quotes to be what you want  it to be!
   lcd.print("Humidite = " + String(dht.readHumidity())+" %");
 
-   if(H > 60){ 
-   digitalWrite(13, HIGH);
+
+if(Temperature < 22){
+   digitalWrite(13, LOW);
    digitalWrite(12, LOW);
-   digitalWrite(11, LOW);
+   digitalWrite(11, HIGH);
    }
    
-   else if(H >= 30 && H <= 60){
+   else if(Temperature >= 18 && Temperature <= 22){
    digitalWrite(13, LOW);
    digitalWrite(12, HIGH);
    digitalWrite(11, LOW);
    }
 
-   else if(H < 30){
-   digitalWrite(13, LOW);
+   else if(Temperature < 18){
+   digitalWrite(13, HIGH);
    digitalWrite(12, LOW);
-   digitalWrite(11, HIGH);
+   digitalWrite(11, LOW);
    }
-
 }
+
+
+  
