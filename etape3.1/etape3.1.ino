@@ -48,10 +48,10 @@ void loop() {
   lcd.print("Humidite = " + String(dht.readHumidity())+" %");
 
 
-if(Temperature < 22){
-   digitalWrite(13, LOW);
+if(Temperature > 22){
+   digitalWrite(13, HIGH);
    digitalWrite(12, LOW);
-   digitalWrite(11, HIGH);
+   digitalWrite(11, LOW);
    }
    
    else if(Temperature >= 18 && Temperature <= 22){
@@ -61,9 +61,9 @@ if(Temperature < 22){
    }
 
    else if(Temperature < 18){
-   digitalWrite(13, HIGH);
+   digitalWrite(13, LOW);
    digitalWrite(12, LOW);
-   digitalWrite(11, LOW);
+   digitalWrite(11, HIGH);
    }
 }
 
