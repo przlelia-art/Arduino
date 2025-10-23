@@ -21,7 +21,7 @@ void loop() {
 
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Temperature= " + String(Temperature) + "C");
+  lcd.print("Temp = " + String(Temperature) + "C");
 
   lcd.setCursor(0,1);
   if(Temperature <18){
