@@ -10,45 +10,42 @@ LiquidCrystal_I2C lcd(0x27,  16, 2);
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-void setup() {
-   pinMode(13, OUTPUT);
-   pinMode(12, OUTPUT);
-   pinMode(11, OUTPUT);
-   pinMode(10, OUTPUT);
-   pinMode(9, OUTPUT);
-   pinMode(8, OUTPUT);
+const int leds[] = {8, 9, 10, 11, 12, 13}; // Broches des 6 LEDs
+const int nLeds = 6;                     // Nombre total de LEDs
+const int intervalle = 1000; 
 
+void setup() {
   lcd.init();
   lcd.backlight();
   Serial.begin(9600);
   dht.begin();
 
-  
+  for (int i = 0; i < nLeds; i++) {
+  pinMode(leds[i], OUTPUT);
+  digitalWrite(leds[i], LOW);
+  }
 }
 
 void loop() {
 
-   digitalWrite(8, HIGH);
-   digitalWrite(9, HIGH);
-   digitalWrite(10, HIGH);
-   digitalWrite(11, HIGH);
-   digitalWrite(12, HIGH);
-   digitalWrite(13, HIGH);
-   delay(1000);
-
-
-   digitalWrite(8, LOW);
-   digitalWrite(10, LOW);
-   digitalWrite(12, LOW);
-   delay(1000);
-
  
+ // Étape 1 : allumer les LEDs une par une
+    for (int i = 0; i < nLeds; i++) {
+    digitalWrite(leds[i], HIGH);
+    delay(intervalle);
+     }
 
- 
- 
+ // Étape 2 : clignotement final
+    for (int blink = 0; blink < 3; blink++) {
+    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], LOW);
+    delay(300);
+    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], HIGH);
+    delay(300);
+    }
 
-  
+  // Étape 3 : Réinitialisation
+    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], LOW);
 
- 
-
+  // Pause avant de recommencer
+  delay(2000);
 }
