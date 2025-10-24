@@ -1,4 +1,4 @@
-const int leds[] = {8, 9, 10, 11, 12, 13}; // LEDs sur broches PWM
+const int leds[] = {3, 5, 6, 9, 10, 11}; // LEDs sur broches PWM
 const int nLeds = sizeof(leds)/sizeof(leds[0]);
 
 int brightness = 0;     // Intensité actuelle
