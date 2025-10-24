@@ -1,38 +1,66 @@
+#include<Servo.h>
 
-#include <Servo.h>
+// définir les broches de sortie
+const int TriggerPin = 11;
+const int EchoPin = 12;
+const int motorSignalPin = 9;
 
-//Définir les broches Trig et Echo de l'ultrason
-const int trigPin = 10;
-const int echoPin = 9;
+// position de départ
+const int startAngle = 90;
 
-//Déclaration de la durée et de la distance
-long duration;
-int distance;
+// limites de rotation
+const int minimumAngle = 6;
+const int maximumAngle = 175;
 
-Servo myServo; //Création d'un objet pour cotroler le servomoteur
+// vitesse
+const int degreesPerCycle = 1;
 
-int pos = 0;    // variable pour la position du servomoteur
+// instance de la classe de la bibliothèque
+Servo motor;
 
-void setup() {
-  pinMode(trigPin, OUTPUT); //Mettre la broche trig en sortie
-  pinMode(echoPin, INPUT); //Mettre la broche echo en sortie
-  Serial.begin(9600);
-  myServo.attach(8);  // définir sur quel PIn est le servomoteur
+void setup(void) 
+{
+    pinMode(TriggerPin, OUTPUT);
+    pinMode(EchoPin, INPUT);
+    motor.attach(motorSignalPin);
+    Serial.begin(9600);
 }
 
-void loop() {
-  for (pos = 0; pos <= 180; pos += 1) { //va de 180 degré à 0
-    // in steps of 1 degree
-    myservo.write(pos);              //dis au servo d'aller dans la variable "pos"
-    delay(10);                       //attends 15 ms que le servo moteur atteigne sa position
-  }
-  for (pos = 180; pos >= 0; pos -= 1) { //va de 180 degré à 0
-    myservo.write(pos);              //dis au servo d'aller dans la variable "pos"
-    delay(10);                       //attends 15 ms que le servo moteur atteigne sa position
-  }
-  distance = calculateDistance(); //calcul de la mesure par le capteur ultrason à chaque degré
-  Serial.print(pos); //Envoyer les valeurs en degré dans le port série
-  Serial.print(","); //Envoie du caractère additionnel
-  Serial.print(distance); //Envoyer la valeur de la distance au port série
-  Serial.print(","); //Envoie du caractère additionnel
+void loop(void)
+{
+    static int currentAngle = startAngle;
+    static int motorRotateAmount = degreesPerCycle;
+
+    // faire tourner le moteur
+    motor.write(currentAngle);
+    delay(10);
+    // calculer la distance avec le capteur, et écrire la valeur avec l'angle dans le moniteur série
+    SerialOutput(currentAngle, CalculateDistance());
+
+    // mettre à jour la position du moteur
+    currentAngle += motorRotateAmount;
+
+    // si le moteur atteint une des limites, inverser la direction
+    if(currentAngle <= minimumAngle || currentAngle >= maximumAngle) 
+    {
+        motorRotateAmount = -motorRotateAmount;
+    }
+}
+
+int CalculateDistance(void)
+{
+    // déclencher le capteur ultrasonique et enregistrer le temps aller-retour
+    digitalWrite(TriggerPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TriggerPin, LOW);
+    long duration = pulseIn(EchoPin, HIGH);
+    // convertir cette durée en distance
+    float distance = duration * 0.017F;
+    return int(distance);
+}
+
+void SerialOutput(const int angle, const int distance)
+{
+    // convertir l’angle et la distance en chaîne de caractères et les afficher via le port série
+    Serial.println(String(angle) + "," + String(distance));
 }
