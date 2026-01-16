@@ -1,51 +1,55 @@
-
 #include <LiquidCrystal_I2C.h>
-
-#include  <Wire.h>
-
-LiquidCrystal_I2C lcd(0x27,  16, 2);
-
+#include <Wire.h>
 #include "DHT.h"
+
 #define DHTPIN 2
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
-
-const int leds[] = {8, 9, 10, 11, 12, 13}; // Broches des 6 LEDs
-const int nLeds = 6;                     // Nombre total de LEDs
-const int intervalle = 1000; 
+LiquidCrystal_I2C lcd(0x27,  16, 2);
 
 void setup() {
+  Serial.begin(9600);
   lcd.init();
   lcd.backlight();
-  Serial.begin(9600);
   dht.begin();
-
-  for (int i = 0; i < nLeds; i++) {
-  pinMode(leds[i], OUTPUT);
-  digitalWrite(leds[i], LOW);
-  }
 }
-
 void loop() {
+  int Temperature = dht.readTemperature();
+  int Humidite = dht.readHumidity();
 
- 
- // Étape 1 : allumer les LEDs une par une
-    for (int i = 0; i < nLeds; i++) {
-    digitalWrite(leds[i], HIGH);
-    delay(intervalle);
-     }
+  delay(5000);
 
- // Étape 2 : clignotement final
-    for (int blink = 0; blink < 3; blink++) {
-    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], LOW);
-    delay(300);
-    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], HIGH);
-    delay(300);
-    }
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Temperature= " + String(Temperature) + "C");
 
-  // Étape 3 : Réinitialisation
-    for (int i = 0; i < nLeds; i++) digitalWrite(leds[i], LOW);
+  lcd.setCursor(0,1);
+  if(Temperature <18){
+    lcd.print("Temp basse");
+  }
+  else if(Temperature >=18 && Temperature<=22){
+    lcd.print("Temp ideal");
+  }
+  else{
+    lcd.print("Temp elevee");
+  }
 
-  // Pause avant de recommencer
-  delay(2000);
+  delay(5000);
+  
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Humidite = " + String(Humidite) + "%");
+
+  lcd.setCursor(0,1);
+  if(Humidite <30){
+    lcd.setCursor(0, 1);
+    lcd.print("Humi basse");
+  }
+  else if(Humidite >=30 && Humidite<=60){
+    lcd.print("Humi ideal");
+  }
+  else{
+    lcd.print("Humi elevee");
+
+  }
 }

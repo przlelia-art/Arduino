@@ -1,55 +1,81 @@
-#include <LiquidCrystal_I2C.h>
-#include <Wire.h>
-#include "DHT.h"
 
+#include <LiquidCrystal_I2C.h>
+
+#include  <Wire.h>
+
+LiquidCrystal_I2C lcd(0x27,  16, 2);
+
+#include "DHT.h"
 #define DHTPIN 2
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
-LiquidCrystal_I2C lcd(0x27,  16, 2);
 
 void setup() {
-  Serial.begin(9600);
+   pinMode(13, OUTPUT);
+   pinMode(12, OUTPUT);
+   pinMode(11, OUTPUT);
+   pinMode(10, OUTPUT);
+   pinMode(9, OUTPUT);
+   pinMode(8, OUTPUT);
+
   lcd.init();
   lcd.backlight();
+  Serial.begin(9600);
   dht.begin();
-}
-void loop() {
-  int Temperature = dht.readTemperature();
-  int Humidite = dht.readHumidity();
 
-  delay(5000);
-
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Temp = " + String(Temperature) + "C");
-
-  lcd.setCursor(0,1);
-  if(Temperature <18){
-    lcd.print("Temp basse");
-  }
-  else if(Temperature >=18 && Temperature<=22){
-    lcd.print("Temp ideal");
-  }
-  else{
-    lcd.print("Temp elevee");
-  }
-
-  delay(5000);
   
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Humidite = " + String(Humidite) + "%");
+}
 
-  lcd.setCursor(0,1);
-  if(Humidite <30){
-    lcd.setCursor(0, 1);
-    lcd.print("Humi basse");
-  }
-  else if(Humidite >=30 && Humidite<=60){
-    lcd.print("Humi ideal");
-  }
-  else{
-    lcd.print("Humi elevee");
+void loop() {
 
-  }
+   digitalWrite(8, HIGH);
+   delay(300);
+   
+   digitalWrite(9, HIGH);
+   digitalWrite(8, LOW);
+   delay(300);
+  
+   digitalWrite(10, HIGH);
+   digitalWrite(9, LOW);
+   delay(300);
+  
+   digitalWrite(11, HIGH);
+   digitalWrite(10, LOW);
+   delay(300);
+
+   digitalWrite(12, HIGH);
+   digitalWrite(11, LOW);
+   delay(300);
+ 
+   digitalWrite(13, HIGH);
+   digitalWrite(12, LOW);
+   delay(300);
+
+  digitalWrite(12, HIGH);
+  digitalWrite(13, LOW);
+  delay(300);
+
+  digitalWrite(11, HIGH);
+  digitalWrite(12, LOW);
+  delay(300);
+
+  digitalWrite(10, HIGH);
+  digitalWrite(11, LOW);
+  delay(300);
+
+  digitalWrite(9, HIGH);
+  digitalWrite(10, LOW);
+  delay(300);
+
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
+  delay(300);
+
+  digitalWrite(8, LOW);
+  delay(300);
+
+  
+
+ 
+
 }

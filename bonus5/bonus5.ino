@@ -1,81 +1,36 @@
+const int leds[] = {8, 9, 10, 11, 12, 13}; // LEDs sur broches PWM
+const int nLeds = sizeof(leds)/sizeof(leds[0]);
 
-#include <LiquidCrystal_I2C.h>
-
-#include  <Wire.h>
-
-LiquidCrystal_I2C lcd(0x27,  16, 2);
-
-#include "DHT.h"
-#define DHTPIN 2
-#define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
+int brightness = 0;     // Intensité actuelle
+int fadeAmount = 5;     // Vitesse de variation
+bool increasing = true; // Sens de la respiration
 
 void setup() {
-   pinMode(13, OUTPUT);
-   pinMode(12, OUTPUT);
-   pinMode(11, OUTPUT);
-   pinMode(10, OUTPUT);
-   pinMode(9, OUTPUT);
-   pinMode(8, OUTPUT);
-
-  lcd.init();
-  lcd.backlight();
-  Serial.begin(9600);
-  dht.begin();
-
-  
+  for (int i = 0; i < nLeds; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
 }
 
 void loop() {
+  // Appliquer la même luminosité à toutes les LEDs
+  for (int i = 0; i < nLeds; i++) {
+    analogWrite(leds[i], brightness);
+  }
 
-   digitalWrite(8, HIGH);
-   delay(300);
-   
-   digitalWrite(9, HIGH);
-   digitalWrite(8, LOW);
-   delay(300);
-  
-   digitalWrite(10, HIGH);
-   digitalWrite(9, LOW);
-   delay(300);
-  
-   digitalWrite(11, HIGH);
-   digitalWrite(10, LOW);
-   delay(300);
+  // Modifier la luminosité
+  if (increasing) {
+    brightness += fadeAmount;
+    if (brightness >= 255) {
+      brightness = 255;
+      increasing = false;
+    }
+  } else {
+    brightness -= fadeAmount;
+    if (brightness <= 0) {
+      brightness = 0;
+      increasing = true;
+    }
+  }
 
-   digitalWrite(12, HIGH);
-   digitalWrite(11, LOW);
-   delay(300);
- 
-   digitalWrite(13, HIGH);
-   digitalWrite(12, LOW);
-   delay(300);
-
-  digitalWrite(12, HIGH);
-  digitalWrite(13, LOW);
-  delay(300);
-
-  digitalWrite(11, HIGH);
-  digitalWrite(12, LOW);
-  delay(300);
-
-  digitalWrite(10, HIGH);
-  digitalWrite(11, LOW);
-  delay(300);
-
-  digitalWrite(9, HIGH);
-  digitalWrite(10, LOW);
-  delay(300);
-
-  digitalWrite(8, HIGH);
-  digitalWrite(9, LOW);
-  delay(300);
-
-  digitalWrite(8, LOW);
-  delay(300);
-
-  
-
- 
-
+  delay(30); // Ajuste la vitesse de la respiration
 }

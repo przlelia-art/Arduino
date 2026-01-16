@@ -1,36 +1,20 @@
-const int leds[] = {3, 5, 6, 9, 10, 11}; // LEDs sur broches PWM
-const int nLeds = sizeof(leds)/sizeof(leds[0]);
+#include <Servo.h>
 
-int brightness = 0;     // Intensité actuelle
-int fadeAmount = 5;     // Vitesse de variation
-bool increasing = true; // Sens de la respiration
+Servo myservo;
+int pos = 0; 
 
 void setup() {
-  for (int i = 0; i < nLeds; i++) {
-    pinMode(leds[i], OUTPUT);
-  }
+  myservo.attach(9);
 }
 
 void loop() {
-  // Appliquer la même luminosité à toutes les LEDs
-  for (int i = 0; i < nLeds; i++) {
-    analogWrite(leds[i], brightness);
+  for (pos = 0; pos <= 180; pos += 1) {
+    myservo.write(pos);
+    delay(15);
   }
 
-  // Modifier la luminosité
-  if (increasing) {
-    brightness += fadeAmount;
-    if (brightness >= 255) {
-      brightness = 255;
-      increasing = false;
-    }
-  } else {
-    brightness -= fadeAmount;
-    if (brightness <= 0) {
-      brightness = 0;
-      increasing = true;
-    }
+  for (pos = 180; pos >= 0; pos -= 1) {
+    myservo.write(pos);
+    delay(15);
   }
-
-  delay(30); // Ajuste la vitesse de la respiration
 }
